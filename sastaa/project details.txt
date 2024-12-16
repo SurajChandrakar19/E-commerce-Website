@@ -1,0 +1,55 @@
+ecommerce-backend/
+├── src/
+│ ├── main/
+│ │ ├── java/
+│ │ │ └── com.ecommerce
+│ │ │ ├── controller/
+│ │ │ │ ├── ProductController.java // Handles product-related endpoints
+│ │ │ │ ├── UserController.java // Handles user-related endpoints
+│ │ │ │ ├── OrderController.java // Handles order-related endpoints
+│ │ │ │ └── CartController.java // Handles cart-related endpoints
+│ │ │ ├── service/
+│ │ │ │ ├── ProductService.java // saveProduct(Product product), getAllProducts(), getProductById(Long id), getProductsByCategory(Long categoryId), deleteProduct(Long id)
+│ │ │ │ ├── UserService.java // saveUser(User user), getUserById(Long id), getUserByEmail(String email), deleteUser(Long id)
+│ │ │ │ ├── OrderService.java // saveOrder(Order order), getAllOrders(), getOrdersByUserId(Long userId), getOrderById(Long id), deleteOrder(Long id)
+│ │ │ │ └── CartService.java // addItemToCart(Long cartId, CartItem cartItem), removeItemFromCart(Long cartId, Long productId), updateCartItemQuantity(Long cartId, Long productId, int quantity), getCartItems(Long cartId), deleteCartItem(Long cartId, Long productId)
+│ │ │ ├── service/impl/
+│ │ │ │ ├── ProductServiceImpl.java // Implementation of ProductService
+│ │ │ │ ├── UserServiceImpl.java // Implementation of UserService
+│ │ │ │ ├── OrderServiceImpl.java // Implementation of OrderService
+│ │ │ │ └── CartServiceImpl.java // Implementation of CartService
+│ │ │ ├── model/
+│ │ │ │ ├── Product.java // Entity for product table :- id, name, description, price, imageUrl, categoryId
+│ │ │ │ ├── User.java // Entity for user table :- id, firstName, lastName, email, password, role, mobileNumber
+│ │ │ │ ├── Order.java // Entity for order table :- id, userId, totalAmount, status, orderDate, orderItems
+│ │ │ │ ├── OrderItem.java // Entity for order item table :- id, orderId, productId, quantity, price, order
+│ │ │ │ ├── Cart.java // Entity for cart table :- id, userId, cartIntems
+│ │ │ │ ├── Category.java // Entity for category table :- id, name, description
+│ │ │ │	└── CartItem.java //	:- id, cartId, productId, quantity, cart
+│ │ │ ├── repository/
+│ │ │ │ ├── ProductRepository.java // Repository for product table
+│ │ │ │ ├── UserRepository.java // Repository for user table
+│ │ │ │ ├── OrderRepository.java // Repository for order table
+│ │ │ │ ├── OrderItemRepository.java // Repository for order item table
+│ │ │ │ └── CartRepository.java // Repository for cart table
+│ │ │ ├── exception/
+│ │ │ │ ├── ResourceNotFoundException.java // Custom exception for missing resources
+│ │ │ │ └── InvalidRequestException.java // Custom exception for invalid requests
+│ │ │ └── EcommerceApplication.java // Main application entry point
+│ │ ├── resources/
+│ │ │ ├── application.properties // Database and app configuration
+│ │ │ ├── data.sql // Optional: Initial data insertion
+│ │ │ ├── schema.sql // Optional: Database schema definition
+│ │ │ └── static/
+│ │ │ ├── styles.css // Optional: Static CSS file
+│ │ │ └── logo.png // Optional: Static image file
+│ │ └── webapp/WEB-INF/
+│ │ └── error.jsp // Optional: Error page for exceptions
+│ ├── test/
+│ │ ├── java/
+│ │ │ ├── com.ecommerce.controller/
+│ │ │ │ └── ProductControllerTest.java // Unit tests for ProductController
+│ │ │ ├── com.ecommerce.service/
+│ │ │ │ └── ProductServiceTest.java // Unit tests for ProductService
+├── pom.xml // Maven dependencies
+└── README.md
