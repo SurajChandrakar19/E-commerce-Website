@@ -43,4 +43,12 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
+    
+    public boolean updateProduct(Long id, Product product) {
+    	if(getProductById(id) != null) {
+    		saveProduct(product);
+    		return true;
+    	}
+    	return false;
+    }
 }

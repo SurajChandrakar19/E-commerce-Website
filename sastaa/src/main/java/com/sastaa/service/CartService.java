@@ -4,6 +4,7 @@ import java.util.List;
 
 import java.util.Optional;
 
+import com.sastaa.dto.CartItemRequest;
 import com.sastaa.model.Cart;
 import com.sastaa.model.CartItem;
 
@@ -26,4 +27,12 @@ public interface CartService {
 
     // Delete a cart
     void deleteCart(Long id);
+    
+    void addToCart(Long id, CartItemRequest cartItemRequest);
+
+	void removeFromCart(Long cartId, Long itemId);
+
+	Cart viewCart(Long cartId);
+
+	List<CartItem> listCartItems(Long cartId);
 }
