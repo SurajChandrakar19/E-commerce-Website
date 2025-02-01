@@ -2,19 +2,9 @@ package com.sastaa.dto;
 
 
 public class CartItemRequest {
-
-    private Long productId;  // ID of the product to be added to the cart
-    private int quantity;    // Quantity of the product to be added
-
-    // Default constructor
-    public CartItemRequest() {
-    }
-
-    // Parameterized constructor
-    public CartItemRequest(Long productId, int quantity) {
-        this.productId = productId;
-        this.quantity = quantity;
-    }
+    private Long productId;
+    private int quantity;
+    private double price;
 
     // Getters and setters
     public Long getProductId() {
@@ -33,11 +23,12 @@ public class CartItemRequest {
         this.quantity = quantity;
     }
 
-    @Override
-    public String toString() {
-        return "CartItemRequest{" +
-                "productId=" + productId +
-                ", quantity=" + quantity +
-                '}';
-    }
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+    
 }

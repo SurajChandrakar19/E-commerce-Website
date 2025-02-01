@@ -16,14 +16,13 @@ import java.util.Optional;
 @Service
 public class CartServiceImpl implements CartService {
 
-    private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
-
-    @Autowired
-    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository) {
-        this.cartRepository = cartRepository;
-        this.cartItemRepository = cartItemRepository;
-    }
+	@Autowired
+    private CartRepository cartRepository;
+	@Autowired
+    private CartItemRepository cartItemRepository;
+    
+    public CartServiceImpl() {
+	}
 
     @Override
     public Cart saveCart(Cart cart) {
@@ -37,9 +36,17 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartItem addItemToCart(Long cartId, CartItem cartItem) {
-        cartItem.setCartId(cartId);
+        // Check if the cart exists
+        Cart cart = cartRepository.findById(cartId)
+                                   .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " + cartId));
+
+        // Set the cart reference in the cart item
+        cartItem.setCart(cart);
+
+        // Save the cart item to the database
         return cartItemRepository.save(cartItem);
     }
+
 
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
@@ -58,43 +65,50 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addToCart(Long cartId, CartItemRequest cartItemRequest) {
-        // Fetch the cart by ID
-        Optional<Cart> optionalCart = cartRepository.findById(cartId);
+        // Find the cart by ID, or throw an exception if not found
+        Cart cart = cartRepository.findById(cartId)
+                                   .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
-        Cart cart;
-        if (optionalCart.isPresent()) {
-            cart = optionalCart.get();
-        } else {
-            // Create a new cart if it doesn't exist
-            cart = new Cart();
-            cart.setId(cartId);
-            cart = cartRepository.save(cart);
-        }
+        // Check if the product already exists in the cart
+        Optional<CartItem> existingItem = cart.getCartItems().stream()
+                                              .filter(item -> item.getProductId().equals(cartItemRequest.getProductId()))
+                                              .findFirst();
 
-        // Check if the item already exists in the cart
-        Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductId(cartId, cartItemRequest.getProductId());
         if (existingItem.isPresent()) {
-            // Update the quantity of the existing item
+        	
             CartItem cartItem = existingItem.get();
             cartItem.setQuantity(cartItem.getQuantity() + cartItemRequest.getQuantity());
-            cartItemRepository.save(cartItem);
         } else {
-            // Add a new item to the cart
-            CartItem cartItem = new CartItem();
-            cartItem.setCartId(cartId);
-            cartItem.setProductId(cartItemRequest.getProductId());
-            cartItem.setQuantity(cartItemRequest.getQuantity());
-            cartItemRepository.save(cartItem);
+            // Add a new cart item
+            CartItem newCartItem = new CartItem();
+            newCartItem.setCart(cart); // Set the relationship
+            newCartItem.setProductId(cartItemRequest.getProductId());
+            newCartItem.setQuantity(cartItemRequest.getQuantity());
+            cart.getCartItems().add(newCartItem); // Add the new item to the cart
         }
+
+        // Save the cart to the repository
+        cartRepository.save(cart); // Cascade should ensure CartItem is saved automatically
     }
     
     @Override
     public void removeFromCart(Long cartId, Long itemId) {
-        Optional<CartItem> cartItem = cartItemRepository.findById(itemId);
-        if (cartItem.isPresent() && cartItem.get().getCartId().equals(cartId)) {
-            cartItemRepository.deleteById(itemId);
+        // Find the cart item by its ID
+        Optional<CartItem> cartItemOptional = cartItemRepository.findById(itemId);
+
+        // Check if the cart item exists and belongs to the specified cart
+        if (cartItemOptional.isPresent()) {
+            CartItem cartItem = cartItemOptional.get();
+
+            // Validate that the cart item's cart ID matches the provided cart ID
+            if (cartItem.getCart().getId().equals(cartId)) {
+                // Remove the cart item
+                cartItemRepository.deleteById(itemId);
+            } else {
+                throw new IllegalArgumentException("CartItem does not belong to the specified cart.");
+            }
         } else {
-            throw new IllegalArgumentException("CartItem not found or does not belong to the cart.");
+            throw new IllegalArgumentException("CartItem not found.");
         }
     }
 

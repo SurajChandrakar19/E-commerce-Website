@@ -6,11 +6,13 @@ import java.util.List;
 
 //id, userId, totalAmount, status, orderDate, orderItems
 @Entity
+@Table(name = "`order`")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     private Long userId;
     private Double totalAmount;
     private String status;

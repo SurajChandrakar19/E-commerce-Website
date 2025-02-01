@@ -2,8 +2,10 @@ package com.sastaa.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.sastaa.model.Cart;
 import com.sastaa.model.CartItem;
 import com.sastaa.repository.CartItemRepository;
+import com.sastaa.repository.CartRepository;
 import com.sastaa.service.CartItemService;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
 public class CartItemServiceImpl implements CartItemService {
 
     private final CartItemRepository cartItemRepository;
+    private CartRepository cartRepository;
 
     @Autowired
     public CartItemServiceImpl(CartItemRepository cartItemRepository) {
@@ -20,9 +23,17 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public CartItem addItemToCart(Long cartId, CartItem cartItem) {
-        cartItem.setCartId(cartId);
+        // Check if the cart exists
+        Cart cart = cartRepository.findById(cartId)
+                                   .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " + cartId));
+
+        // Associate the cart with the cart item
+        cartItem.setCart(cart);
+
+        // Save the cart item to the database
         return cartItemRepository.save(cartItem);
     }
+
 
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
